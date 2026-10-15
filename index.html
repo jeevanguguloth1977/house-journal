@@ -1,0 +1,919 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>House Journal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout concept: a black gallery. A 3D version of the logo (fluted H, marble J, brass roof, pendant lamp) turns beside the headline; the louver studio lets visitors build a wall panel in 3D. */
+:root {
+  --ink: #0b0907;
+  --ink-2: #14100c;
+  --ink-3: #1d1710;
+  --brass: #c39a5e;
+  --brass-hi: #ead0a0;
+  --marble: #ebe6de;
+  --muted: #a39887;
+  --line: rgba(195, 154, 94, 0.28);
+  --font-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --font-body: "Jost", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--marble);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 17px;
+  line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--brass-hi); outline-offset: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; }
+.eyebrow {
+  font-size: 0.74rem; letter-spacing: 0.34em; text-transform: uppercase;
+  color: var(--brass); font-weight: 400;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.8rem, 4.2vw, 2.9rem); line-height: 1.12; letter-spacing: 0.03em; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 60ch; }
+
+/* header */
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 22px; flex-wrap: wrap; }
+.brand { text-decoration: none; display: grid; line-height: 1; gap: 6px; }
+.brand b { font-family: var(--font-display); font-weight: 500; font-size: 1.35rem; letter-spacing: 0.28em; color: var(--brass-hi); }
+.brand span { font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--muted); }
+nav.main { display: flex; gap: 26px; flex-wrap: wrap; }
+nav.main a { text-decoration: none; font-size: 0.74rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--muted); padding-block: 6px; border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
+nav.main a:hover { color: var(--brass-hi); border-color: var(--brass); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 24px; align-items: center; padding-block: 24px 56px; }
+.hero h1 { font-size: clamp(2.5rem, 6.4vw, 5rem); line-height: 1.04; letter-spacing: 0.02em; margin-block: 18px 22px; color: var(--marble); }
+.hero h1 em { font-style: normal; color: var(--brass); }
+.hero .lede { font-size: 1.05rem; }
+.cta { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
+.btn { display: inline-block; text-decoration: none; font-family: var(--font-body); font-size: 0.78rem; letter-spacing: 0.24em; text-transform: uppercase; padding: 15px 26px; border: 1px solid var(--brass); color: var(--brass-hi); background: transparent; cursor: pointer; transition: background .2s, color .2s; }
+.btn:hover { background: var(--brass); color: var(--ink); }
+.btn.solid { background: var(--brass); color: var(--ink); font-weight: 500; }
+.btn.solid:hover { background: var(--brass-hi); }
+.scope { margin-top: 36px; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.scope i { font-style: normal; color: var(--brass); }
+
+.stage { position: relative; aspect-ratio: 1 / 1.02; max-height: 660px; width: 100%; max-width: 100%; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.stage::before { content: ""; position: absolute; inset: 8% 4%; background: radial-gradient(closest-side, rgba(195,154,94,0.16), transparent 72%); }
+.fallback { display: none; position: absolute; inset: 0; place-items: center; text-align: center; font-family: var(--font-display); color: var(--brass); letter-spacing: 0.3em; }
+.stage[data-3d="off"] .fallback { display: grid; }
+
+/* services */
+section { padding-block: 72px; border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 14px; margin-bottom: 40px; }
+.services { list-style: none; margin: 0; padding: 0; }
+.services li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 12px 40px; padding-block: 24px; border-bottom: 1px solid var(--line); align-items: baseline; transition: background .25s, padding .25s; }
+.services li:hover { background: linear-gradient(90deg, rgba(195,154,94,0.09), transparent); padding-left: 14px; }
+.services h3 { font-size: clamp(1.15rem, 2.4vw, 1.55rem); letter-spacing: 0.05em; color: var(--brass-hi); }
+.services p { color: var(--muted); }
+
+/* louver studio */
+.studio { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+.studio .view { position: relative; aspect-ratio: 1 / 0.95; width: 100%; max-width: 100%; background: radial-gradient(ellipse at 50% 40%, #1d1710, #0b0907 75%); border: 1px solid var(--line); }
+.studio canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; }
+.studio canvas:active { cursor: grabbing; }
+.hint { position: absolute; left: 14px; bottom: 10px; font-size: 0.66rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+.controls { display: grid; gap: 26px; min-width: 0; }
+.ctl label, .ctl .lab { display: flex; justify-content: space-between; font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.ctl output { color: var(--brass-hi); font-variant-numeric: tabular-nums; letter-spacing: 0.1em; }
+input[type=range] { width: 100%; accent-color: var(--brass); }
+.finishes { display: flex; flex-wrap: wrap; gap: 10px; }
+.finishes button { font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 10px 14px 10px 10px; background: transparent; color: var(--marble); border: 1px solid var(--line); cursor: pointer; display: inline-flex; gap: 10px; align-items: center; }
+.finishes button[aria-pressed="true"] { border-color: var(--brass-hi); background: rgba(195,154,94,0.12); }
+.finishes .dot { width: 16px; height: 16px; display: block; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); }
+.switch { display: flex; gap: 12px; align-items: center; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; }
+.switch input { accent-color: var(--brass); width: 18px; height: 18px; }
+.readout { border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.readout b { color: var(--brass-hi); font-weight: 400; }
+
+/* process */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: step; }
+.steps li { padding: 4px 26px 4px 0; border-top: 1px solid var(--brass); position: relative; padding-top: 22px; }
+.steps li::before { counter-increment: step; content: counter(step); font-family: var(--font-display); font-size: 2.6rem; color: var(--brass); line-height: 1; display: block; margin-bottom: 14px; }
+.steps h3 { font-size: 1.1rem; letter-spacing: 0.06em; margin-bottom: 8px; color: var(--marble); }
+.steps p { color: var(--muted); font-size: 0.95rem; }
+
+/* contact */
+.contact { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 48px; align-items: start; }
+.contact dl { margin: 28px 0 0; display: grid; gap: 18px; }
+.contact dt { font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); }
+.contact dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.contact dd a { color: var(--marble); text-decoration-color: var(--brass); text-underline-offset: 4px; }
+form { display: grid; gap: 20px; min-width: 0; }
+.field { display: grid; gap: 8px; min-width: 0; }
+.field > span, fieldset legend { font-size: 0.7rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--muted); }
+input[type=text], input[type=tel], select, textarea {
+  width: 100%; font-family: var(--font-body); font-size: 1rem; font-weight: 300; color: var(--marble);
+  background: var(--ink-2); border: 1px solid var(--line); padding: 13px 14px; border-radius: 0;
+}
+textarea { min-height: 110px; resize: vertical; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+fieldset legend { padding: 0; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips label { cursor: pointer; }
+.chips input { position: absolute; opacity: 0; pointer-events: none; }
+.chips span { display: inline-block; padding: 9px 14px; border: 1px solid var(--line); font-size: 0.82rem; color: var(--muted); transition: all .2s; }
+.chips input:checked + span { border-color: var(--brass-hi); color: var(--ink); background: var(--brass); }
+.chips input:focus-visible + span { outline: 2px solid var(--brass-hi); outline-offset: 2px; }
+.out { display: grid; gap: 10px; }
+.out[hidden] { display: none; }
+.out textarea { min-height: 170px; font-size: 0.92rem; }
+.status { font-size: 0.88rem; color: var(--brass-hi); min-height: 1.4em; }
+.fine { font-size: 0.82rem; color: var(--muted); }
+
+footer { border-top: 1px solid var(--line); padding-block: 34px 44px; display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: space-between; align-items: center; color: var(--muted); font-size: 0.82rem; letter-spacing: 0.12em; }
+footer b { font-family: var(--font-display); font-weight: 500; letter-spacing: 0.28em; color: var(--brass-hi); }
+
+@media (max-width: 900px) {
+  .hero, .studio, .contact { grid-template-columns: minmax(0, 1fr); }
+  .mats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 34px; }
+  .services li { grid-template-columns: minmax(0, 1fr); }
+  .stage { aspect-ratio: 1 / 1.08; }
+}
+@media (max-width: 520px) {
+  body { font-size: 16px; }
+  nav.main { gap: 16px; }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .mats { gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+/* ---- v2 additions ---- */
+.tilt { position: relative; transform-style: preserve-3d; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .25s ease-out; will-change: transform; }
+.tilt img { display: block; width: 100%; height: auto; border: 1px solid var(--line); box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.4); background: #000; }
+.tilt::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255,226,176,.22), transparent 55%); opacity: var(--go, 0); transition: opacity .25s; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+.split .copy { display: grid; gap: 18px; min-width: 0; }
+.ticks { list-style: none; margin: 6px 0 4px; padding: 0; display: grid; gap: 12px; }
+.ticks li { padding-left: 26px; position: relative; }
+.ticks li::before { content: ""; position: absolute; left: 0; top: .7em; width: 14px; height: 1px; background: var(--brass); }
+
+/* featured slideshow */
+.show { display: grid; perspective: 1800px; }
+.slide { grid-area: 1 / 1; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 48px; align-items: center; opacity: 0; visibility: hidden; transform: rotateY(55deg) translateX(14%) scale(.92); transform-origin: 0 50%; transition: transform 1s cubic-bezier(.2,.7,.2,1), opacity .8s, visibility 0s 1s; }
+.slide.is-prev { transform: rotateY(-55deg) translateX(-14%) scale(.92); transform-origin: 100% 50%; }
+.slide.is-active { opacity: 1; visibility: visible; transform: none; transition: transform 1s cubic-bezier(.2,.7,.2,1), opacity .8s, visibility 0s; z-index: 2; }
+.slide .pic { max-width: 440px; width: 100%; justify-self: center; }
+.slide .txt { display: grid; gap: 16px; justify-items: start; min-width: 0; }
+.slide h3 { font-size: clamp(1.8rem, 4.6vw, 3.3rem); line-height: 1.08; letter-spacing: .02em; color: var(--marble); }
+.slide h3 em { font-style: normal; color: var(--brass); }
+.slide .pts { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: .72rem; letter-spacing: .24em; text-transform: uppercase; color: var(--brass); }
+.show-ctl { display: flex; align-items: center; gap: 18px; margin-top: 34px; }
+.round { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--brass); background: transparent; color: var(--brass-hi); font-size: 1.1rem; cursor: pointer; display: grid; place-items: center; transition: background .2s, color .2s; }
+.round:hover { background: var(--brass); color: var(--ink); }
+.dots { display: flex; gap: 10px; flex: 1; }
+.dots button { flex: 1; max-width: 70px; height: 24px; background: transparent; border: 0; cursor: pointer; position: relative; padding: 0; }
+.dots button::before { content: ""; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--line); }
+.dots button i { position: absolute; left: 0; top: 11px; height: 2px; width: 0; background: var(--brass-hi); }
+.dots button[aria-current="true"] i { width: 100%; transition: width var(--dur, 6s) linear; }
+.dots.paused button[aria-current="true"] i { transition: none; }
+
+/* 3D ring */
+.ceil { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 40px; align-items: center; }
+.ring-wrap { --w: 250px; --R: 330px; perspective: 1500px; height: calc(var(--w) * 1.3 + 40px); display: grid; place-items: center; overflow: hidden; position: relative; touch-action: pan-y; cursor: grab; min-width: 0; }
+.ring-wrap:active { cursor: grabbing; }
+.ring { width: var(--w); height: calc(var(--w) * 1.25); position: relative; transform-style: preserve-3d; transform: translateZ(calc(var(--R) * -1)) rotateY(var(--a, 0deg)); }
+.ring-item { position: absolute; inset: 0; transform: rotateY(calc(var(--i) * 72deg)) translateZ(var(--R)); border: 0; padding: 0; background: #000; cursor: pointer; }
+.ring-item img { width: 100%; height: 100%; object-fit: contain; display: block; border: 1px solid var(--line); box-shadow: 0 20px 40px -12px rgba(0,0,0,.8); pointer-events: none; -webkit-user-drag: none; }
+.ring-ctl { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
+.panel { border: 1px solid var(--line); background: linear-gradient(160deg, var(--ink-3), var(--ink-2)); padding: 30px; min-height: 340px; display: grid; align-content: start; gap: 14px; min-width: 0; }
+.panel h3 { font-size: 1.5rem; letter-spacing: .04em; color: var(--brass-hi); }
+.panel ul { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 12px; }
+.panel li b { display: block; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; color: var(--marble); }
+.panel li span { color: var(--muted); font-size: .95rem; }
+.panel .count { font-size: .7rem; letter-spacing: .3em; text-transform: uppercase; color: var(--brass); }
+.panel .tag { color: var(--marble); border-top: 1px solid var(--line); padding-top: 14px; }
+
+/* video */
+.phone { justify-self: center; width: min(320px, 100%); aspect-ratio: 9 / 16; border-radius: 34px; padding: 10px; background: linear-gradient(160deg, #3a2f20, #0e0b08); box-shadow: 0 40px 80px -24px rgba(0,0,0,.9), 0 0 0 1px var(--line); transform: perspective(1100px) rotateY(-9deg) rotateX(2deg); transition: transform .5s; }
+.phone:hover, .phone:focus-within { transform: perspective(1100px) rotateY(0) rotateX(0); }
+.phone video { width: 100%; height: 100%; border-radius: 26px; background: #000; object-fit: cover; display: block; }
+
+.phone-line { font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: .06em; color: var(--brass-hi); }
+@media (max-width: 900px) {
+  .split, .ceil, .slide { grid-template-columns: minmax(0, 1fr); }
+  .slide { gap: 22px; }
+  .split { gap: 32px; }
+  .ring-wrap { --w: 190px; --R: 250px; }
+  .phone { transform: none; }
+}
+@media (max-width: 520px) { .ring-wrap { --w: 168px; --R: 225px; } .panel { padding: 22px; } }
+@media (prefers-reduced-motion: reduce) { .tilt, .phone, .slide { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="House Journal home"><b>HOUSE JOURNAL</b><span>Spaces that tell stories</span></a>
+    <nav class="main" aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#services">Services</a>
+      <a href="#viz">3D visualization</a>
+      <a href="#ceilings">Ceiling guide</a>
+      <a href="#studio">Louver studio</a>
+      <a href="#video">Video</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Interior design studio · Chennai</p>
+        <h1>Spaces that <em>tell stories.</em></h1>
+        <p class="lede">House Journal designs and builds complete interiors for homes and commercial spaces, from concept to execution. Every plan is shaped around your space, your lifestyle and your budget.</p>
+        <div class="cta">
+          <a class="btn solid" href="#contact">Plan your space</a>
+          <a class="btn" href="#studio">Build a louver wall</a>
+        </div>
+        <p class="scope"><span>Interiors</span><i>|</i><span>Panels</span><i>|</i><span>Ceilings</span><i>|</i><span>Modular kitchens</span><i>|</i><span>Louvers</span><i>|</i><span>TV units</span><i>|</i><span>Custom furniture</span></p>
+      </div>
+      <div class="stage" id="heroStage" data-3d="on">
+        <canvas id="heroCanvas" aria-label="Animated 3D model of the House Journal mark: a fluted H, a marble J, a brass roof and a warm pendant lamp"></canvas>
+        <div class="fallback"><div>HOUSE<br>JOURNAL</div></div>
+      </div>
+    </div>
+
+    <section id="work" aria-labelledby="h-work">
+      <div class="sec-head"><p class="eyebrow">Featured work</p><h2 id="h-work">One vision, one team, endless possibilities</h2></div>
+      <div class="show" id="show" role="region" aria-roledescription="carousel" aria-label="Featured work">
+      <article class="slide is-active" aria-roledescription="slide" aria-label="1 of 3">
+        <div class="pic"><div class="tilt"><img src="media/language.jpg" alt="A living room with a cream sectional, wood louver panels and lit display shelves, above photos of a kitchen, a master bedroom and a TV unit with dining area" width="660" height="820"></div></div>
+        <div class="txt"><p class="eyebrow">Designed to live beautifully</p><h3>One home. <em>One design language.</em></h3><p class="lede">Spaces that flow. Details that connect. A home that feels like you.</p><p class="pts">Kitchen · Master bedroom · TV unit &amp; dining</p><a class="btn" href="#contact">Plan yours</a></div>
+      </article>
+      <article class="slide" aria-roledescription="slide" aria-label="2 of 3">
+        <div class="pic"><div class="tilt"><img src="media/tvwall.jpg" alt="A back-lit walnut louver TV wall with a floating media unit and lit shelves" width="660" height="820" loading="lazy"></div></div>
+        <div class="txt"><p class="eyebrow">Wall panelling &amp; TV units</p><h3>Your TV wall <em>deserves better.</em></h3><p class="lede">Designed to be the focal point of your living room, with a back-lit louver wall, a floating unit and lit shelving.</p><p class="pts">Premium finish · Smart storage · Warm lighting · Timeless design</p><a class="btn" href="#contact">Plan yours</a></div>
+      </article>
+      <article class="slide" aria-roledescription="slide" aria-label="3 of 3">
+        <div class="pic"><div class="tilt"><img src="media/beforeafter.jpg" alt="Before and after: a plain beige wall with a TV beside the same wall finished with back-lit wood louvers and lit shelves" width="660" height="820" loading="lazy"></div></div>
+        <div class="txt"><p class="eyebrow">Louvers &amp; decorative panels</p><h3>From plain to <em>premium.</em></h3><p class="lede">The right wall treatment can completely transform a space.</p><p class="pts">Before · After</p><a class="btn" href="#contact">Plan yours</a></div>
+      </article>
+      </div>
+      <div class="show-ctl">
+        <button class="round" id="sPrev" type="button" aria-label="Previous slide">&#8592;</button>
+        <div class="dots" id="sDots"></div>
+        <button class="round" id="sNext" type="button" aria-label="Next slide">&#8594;</button>
+      </div>
+    </section>
+
+    <section id="services" aria-labelledby="h-services">
+      <div class="sec-head">
+        <p class="eyebrow">What we build</p>
+        <h2 id="h-services">One studio, from first sketch to final fitting</h2>
+        <p class="lede">Residential and commercial interiors, designed and executed under one roof.</p>
+      </div>
+      <ul class="services">
+        <li><h3>Interior Design &amp; Execution</h3><p>Concept, drawings and site work handled together, so the finished room matches the plan.</p></li>
+        <li><h3>Modular Kitchens &amp; Wardrobes</h3><p>Fitted kitchens and wardrobes sized to your walls, with storage planned around how you cook and dress.</p></li>
+        <li><h3>TV Units &amp; Wall Panelling</h3><p>Media walls and panelled feature walls that give a living room one clear focal point.</p></li>
+        <li><h3>Louvers &amp; Decorative Panels</h3><p>Vertical fluted louvers and decorative panels in wood tones, metal and stone. Try one in the studio below.</p></li>
+        <li><h3>False Ceilings &amp; Lighting</h3><p>Ceiling profiles with layered lighting, from soft cove glow to pendant lamps over a dining table.</p></li>
+        <li><h3>Custom Furniture &amp; Storage Solutions</h3><p>Pieces made to fit the room, from consoles and shelving to full storage walls.</p></li>
+        <li><h3>Residential &amp; Commercial Interiors</h3><p>Apartments, villas, offices and shops, planned with the same attention to detail.</p></li>
+      </ul>
+    </section>
+
+    <section id="viz" aria-labelledby="h-viz">
+      <div class="split">
+        <div class="tilt"><img src="media/viz.jpg" alt="A living room shown half as a 3D wireframe and half as a finished render, with the text 3D Visualization Worldwide" width="622" height="803" loading="lazy"></div>
+        <div class="copy">
+          <p class="eyebrow">Now offering worldwide</p>
+          <h2 id="h-viz">3D visualization</h2>
+          <p class="phone-line">Design your space. See it before it exists.</p>
+          <p class="lede">House Journal now prepares 3D views of interiors for clients anywhere in the world. You see the room before any work starts.</p>
+          <ul class="ticks">
+            <li>Layouts shown in 3D, from wireframe to finished render</li>
+            <li>Materials, finishes and lighting visible before you commit</li>
+            <li>Available to clients worldwide</li>
+          </ul>
+          <div class="cta" style="margin-top:10px"><a class="btn solid" href="#contact">Ask for a 3D view</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ceilings" aria-labelledby="h-ceil">
+      <div class="sec-head">
+        <p class="eyebrow">Ceiling guide</p>
+        <h2 id="h-ceil">False ceiling: where to use it and where to skip it</h2>
+        <p class="lede">Drag the ring or use the arrows. Each card opens the matching advice on the right.</p>
+      </div>
+      <div class="ceil">
+        <div>
+          <div class="ring-wrap" id="ringWrap">
+            <div class="ring" id="ring">
+              <button class="ring-item" type="button" style="--i:0" aria-label="Show: false ceiling overview"><img src="media/ceiling-cover.jpg" alt="Sculpted white false ceiling with warm cove lighting above a living room" width="663" height="770" loading="lazy" draggable="false"></button>
+              <button class="ring-item" type="button" style="--i:1" aria-label="Show: do you need a false ceiling"><img src="media/ceiling-need.jpg" alt="Guide card: do you actually need a false ceiling" width="656" height="813" loading="lazy" draggable="false"></button>
+              <button class="ring-item" type="button" style="--i:2" aria-label="Show: when it makes sense"><img src="media/ceiling-when.jpg" alt="Guide card: when does a false ceiling make sense" width="662" height="806" loading="lazy" draggable="false"></button>
+              <button class="ring-item" type="button" style="--i:3" aria-label="Show: when it does not make sense"><img src="media/ceiling-not.jpg" alt="Guide card: when does a false ceiling not make sense" width="597" height="803" loading="lazy" draggable="false"></button>
+              <button class="ring-item" type="button" style="--i:4" aria-label="Show: ceiling options"><img src="media/ceiling-options.jpg" alt="Guide card: common ceiling options and their visual effect" width="631" height="792" loading="lazy" draggable="false"></button>
+            </div>
+          </div>
+          <div class="ring-ctl">
+            <button class="round" id="rPrev" type="button" aria-label="Previous card">&#8592;</button>
+            <button class="round" id="rNext" type="button" aria-label="Next card">&#8594;</button>
+          </div>
+        </div>
+        <div class="panel" id="panel" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="studio" aria-labelledby="h-studio">
+      <div class="sec-head">
+        <p class="eyebrow">Louver studio</p>
+        <h2 id="h-studio">Shape a louver wall in 3D</h2>
+        <p class="lede">Change the slat width and spacing on a 2400 mm wall, pick a finish and switch on a back-light. Drag the wall to turn it. Bring your favourite combination to the enquiry form.</p>
+      </div>
+      <div class="studio">
+        <div class="view">
+          <canvas id="studioCanvas" aria-label="Interactive 3D louver wall. Drag sideways to rotate."></canvas>
+          <span class="hint">Drag to turn</span>
+        </div>
+        <div class="controls">
+          <div class="ctl">
+            <label for="sw">Slat width <output id="swo">45 mm</output></label>
+            <input id="sw" type="range" min="25" max="100" step="5" value="45">
+          </div>
+          <div class="ctl">
+            <label for="sg">Gap between slats <output id="sgo">25 mm</output></label>
+            <input id="sg" type="range" min="10" max="80" step="5" value="25">
+          </div>
+          <div class="ctl">
+            <div class="lab">Finish</div>
+            <div class="finishes" id="finishes">
+              <button type="button" data-f="walnut" aria-pressed="true"><i class="dot" style="background:#4a2f1c"></i>Walnut</button>
+              <button type="button" data-f="oak" aria-pressed="false"><i class="dot" style="background:#b08a5a"></i>Oak</button>
+              <button type="button" data-f="charcoal" aria-pressed="false"><i class="dot" style="background:#2a2723"></i>Charcoal</button>
+              <button type="button" data-f="brass" aria-pressed="false"><i class="dot" style="background:#c39a5e"></i>Brass</button>
+            </div>
+          </div>
+          <label class="switch" for="led"><input id="led" type="checkbox" checked> Back-light on</label>
+          <p class="readout" id="readout" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="video" aria-labelledby="h-video">
+      <div class="split">
+        <div class="copy">
+          <p class="eyebrow">Watch</p>
+          <h2 id="h-video">The House Journal reel</h2>
+          <p class="lede">A short film from the studio. Press play to watch it with sound.</p>
+          <p class="lede">Prefer to talk it through? Call or message us and we will set up a consultation.</p>
+        </div>
+        <div class="phone">
+          <video id="reel" controls playsinline preload="none" poster="media/reel-poster.jpg" aria-label="House Journal studio reel">
+            <source src="media/reel.mp4" type="video/mp4">
+            Your browser can't play this video.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" aria-labelledby="h-proc">
+      <div class="sec-head">
+        <p class="eyebrow">How a project runs</p>
+        <h2 id="h-proc">From concept to complete execution</h2>
+      </div>
+      <ol class="steps">
+        <li><h3>Consultation</h3><p>We visit or review your space and listen to how you live and what you want to spend.</p></li>
+        <li><h3>Design</h3><p>Layouts, materials and lighting are drawn up so you can see the plan before work starts.</p></li>
+        <li><h3>Budget and materials</h3><p>Finishes and fittings are chosen to fit the budget you set.</p></li>
+        <li><h3>Execution</h3><p>Our team builds and installs the interiors and hands over a finished space.</p></li>
+      </ol>
+    </section>
+
+    <section id="contact" aria-labelledby="h-contact">
+      <div class="contact">
+        <div>
+          <p class="eyebrow">Enquiries &amp; consultations</p>
+          <h2 id="h-contact" style="margin-top:14px">Elevate your space. Elevate your story.</h2>
+          <p class="lede" style="margin-top:18px">Fill in the form and copy the message, then send it to us by email. We reply with next steps for a consultation.</p>
+          <dl>
+            <div><dt>Studio</dt><dd>House Journal, Chennai</dd></div>
+            <div><dt>Phone</dt><dd><a href="tel:+919445439261">9445439261</a></dd></div>
+            <div><dt>Email</dt><dd><a href="mailto:sahejbusiness05@gmail.com">sahejbusiness05@gmail.com</a></dd></div>
+            <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/_house_journal_/" target="_blank" rel="noopener">@_house_journal_</a></dd></div>
+            <div><dt>Facebook</dt><dd>House Journal</dd></div>
+          </dl>
+        </div>
+        <form id="enq" novalidate>
+          <div class="field"><label for="nm"><span>Your name</span></label><input id="nm" type="text" autocomplete="name"></div>
+          <div class="field"><label for="ph"><span>Phone number</span></label><input id="ph" type="tel" autocomplete="tel"></div>
+          <div class="field"><label for="sp"><span>Type of space</span></label>
+            <select id="sp"><option>Apartment</option><option>Independent house or villa</option><option>Office</option><option>Shop or showroom</option><option>Other</option></select>
+          </div>
+          <fieldset>
+            <legend>What do you need?</legend>
+            <div class="chips" id="needs">
+              <label><input type="checkbox" value="Interior design &amp; execution"><span>Full interiors</span></label>
+              <label><input type="checkbox" value="Modular kitchen"><span>Modular kitchen</span></label>
+              <label><input type="checkbox" value="Wardrobes"><span>Wardrobes</span></label>
+              <label><input type="checkbox" value="TV unit &amp; wall panelling"><span>TV unit &amp; panelling</span></label>
+              <label><input type="checkbox" value="3D visualization"><span>3D visualization</span></label>
+              <label><input type="checkbox" value="Louvers &amp; decorative panels"><span>Louvers &amp; panels</span></label>
+              <label><input type="checkbox" value="False ceiling &amp; lighting"><span>False ceiling &amp; lighting</span></label>
+              <label><input type="checkbox" value="Custom furniture &amp; storage"><span>Custom furniture</span></label>
+            </div>
+          </fieldset>
+          <div class="field"><label for="msg"><span>Anything else</span></label><textarea id="msg" placeholder="Size of the space, timeline, budget range, or the louver design you built above."></textarea></div>
+          <div><button class="btn solid" type="submit" id="make">Prepare my enquiry</button></div>
+          <div class="out" id="out" hidden>
+            <label for="outText" class="fine">Your enquiry is ready. Copy it and send it to sahejbusiness05@gmail.com.</label>
+            <textarea id="outText" readonly></textarea>
+            <div class="cta" style="margin-top:0">
+              <button class="btn" type="button" id="copy">Copy enquiry</button>
+              <a class="btn" id="mail" href="mailto:sahejbusiness05@gmail.com">Open in email app</a>
+            </div>
+            <p class="status" id="status" role="status"></p>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <b>HOUSE JOURNAL</b>
+    <span>Interiors · Panels · Ceilings · Modular Kitchens · Louvers · TV Units · Custom Furniture</span>
+    <span>Chennai · 9445439261</span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var HAS3D = typeof THREE !== 'undefined';
+
+  function envMap(renderer) {
+    var pm = new THREE.PMREMGenerator(renderer);
+    var s = new THREE.Scene();
+    s.background = new THREE.Color(0x15110c);
+    function panel(w, h, x, y, z, c, k) {
+      var m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(k), side: THREE.DoubleSide }));
+      m.position.set(x, y, z); m.lookAt(0, 0, 0); s.add(m);
+    }
+    panel(10, 6, 6, 5, 6, 0xffe2b0, 6);
+    panel(8, 8, -8, 2, 3, 0xffd9a0, 2.5);
+    panel(12, 3, 0, -6, 4, 0xffffff, 1.2);
+    panel(6, 6, 0, 6, -6, 0xffe9c8, 3);
+    var t = pm.fromScene(s, 0.04).texture;
+    pm.dispose();
+    return t;
+  }
+
+  function glowTex(inner, outer) {
+    var c = document.createElement('canvas'); c.width = c.height = 128;
+    var x = c.getContext('2d');
+    var g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+    g.addColorStop(0, inner); g.addColorStop(1, outer);
+    x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(c);
+  }
+
+  function marbleTex() {
+    var c = document.createElement('canvas'); c.width = 512; c.height = 1024;
+    var x = c.getContext('2d');
+    var g = x.createLinearGradient(0, 0, 512, 1024);
+    g.addColorStop(0, '#f0ece5'); g.addColorStop(0.5, '#e3ded5'); g.addColorStop(1, '#d6d0c6');
+    x.fillStyle = g; x.fillRect(0, 0, 512, 1024);
+    var seed = 11;
+    function r() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    var i, k, px, py;
+    for (i = 0; i < 6; i++) {
+      x.beginPath(); px = r() * 512; x.moveTo(px, -20);
+      for (k = 1; k <= 10; k++) { px += (r() - 0.45) * 90; x.lineTo(px, -20 + k * 110); }
+      x.strokeStyle = 'rgba(120,112,104,0.07)'; x.lineWidth = 22; x.stroke();
+    }
+    for (i = 0; i < 28; i++) {
+      x.beginPath(); px = r() * 512; x.moveTo(px, -20);
+      for (k = 1; k <= 10; k++) { px += (r() - 0.45) * 80; x.lineTo(px, -20 + k * 110); }
+      var d = 80 + (r() * 40 | 0);
+      x.strokeStyle = 'rgba(' + d + ',' + (d - 4) + ',' + (d - 8) + ',' + (0.12 + r() * 0.3).toFixed(2) + ')';
+      x.lineWidth = r() < 0.15 ? 2.6 : 0.8; x.stroke();
+    }
+    var t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t;
+  }
+
+  function makeRenderer(canvas) {
+    var r = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    r.outputEncoding = THREE.sRGBEncoding;
+    r.toneMapping = THREE.ACESFilmicToneMapping;
+    r.toneMappingExposure = 1.05;
+    return r;
+  }
+
+  function watch(el, onSize, onVisible) {
+    function size() {
+      var w = el.clientWidth, h = el.clientHeight;
+      if (w && h) onSize(w, h);
+    }
+    if (window.ResizeObserver) new ResizeObserver(size).observe(el); else window.addEventListener('resize', size);
+    size();
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (e) { onVisible(e[0].isIntersecting); }, { threshold: 0 }).observe(el);
+    } else onVisible(true);
+  }
+
+  /* ---------- Hero: the House Journal mark in 3D ---------- */
+  function hero() {
+    var stage = document.getElementById('heroStage');
+    var canvas = document.getElementById('heroCanvas');
+    var renderer = makeRenderer(canvas);
+    var scene = new THREE.Scene();
+    var env = envMap(renderer);
+    scene.environment = env;
+    var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+
+    var gold = new THREE.MeshStandardMaterial({ color: 0xc9a063, metalness: 1, roughness: 0.3, envMap: env });
+    var goldDeep = new THREE.MeshStandardMaterial({ color: 0x8a6431, metalness: 0.9, roughness: 0.4, envMap: env });
+    var dark = new THREE.MeshStandardMaterial({ color: 0x120d08, metalness: 0.2, roughness: 0.7 });
+    var marble = new THREE.MeshStandardMaterial({ map: marbleTex(), metalness: 0.05, roughness: 0.22, envMap: env, envMapIntensity: 0.6 });
+    var leaf = new THREE.MeshStandardMaterial({ color: 0x31503a, roughness: 0.6 });
+
+    var house = new THREE.Group();
+    scene.add(house);
+    function box(w, h, d, mat, x, y, z) {
+      var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+      m.position.set(x, y, z); house.add(m); return m;
+    }
+    function pillar(cx, w, h, cy) {
+      box(w, h, 0.42, dark, cx, cy, 0);
+      var n = 5, sw = (w / n) * 0.74, i;
+      for (i = 0; i < n; i++) box(sw, h, 0.56, gold, cx - w / 2 + (i + 0.5) * (w / n), cy, 0);
+    }
+    pillar(-2.0, 0.8, 3.2, 0);
+    pillar(-0.5, 0.8, 3.2, 0);
+    box(0.7, 0.3, 0.5, gold, -1.25, -0.75, 0);          /* H crossbar doubles as a shelf */
+    box(1.0, 3.0, 0.5, marble, 1.5, 0.1, 0);            /* J stem in marble */
+    box(1.5, 0.5, 0.5, marble, 1.25, -1.35, 0);         /* J hook */
+
+    var roofL = box(3.42, 0.15, 0.62, gold, -1.5, 2.5, 0); roofL.rotation.z = 0.359;
+    var roofR = box(2.48, 0.15, 0.62, gold, 1.2, 2.525, 0); roofR.rotation.z = -0.48;
+    box(0.28, 0.72, 0.5, goldDeep, 1.72, 2.78, 0);
+
+    /* plant on the shelf */
+    var pot = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.075, 0.18, 20), goldDeep);
+    pot.position.set(-1.25, -0.51, 0); house.add(pot);
+    var li;
+    for (li = 0; li < 6; li++) {
+      var lf = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), leaf);
+      lf.scale.set(0.5, 1.5, 0.3);
+      var a = li / 6 * Math.PI * 2;
+      lf.position.set(-1.25 + Math.cos(a) * 0.1, -0.3 + (li % 2) * 0.08, Math.sin(a) * 0.08);
+      lf.rotation.z = Math.cos(a) * 0.6; lf.rotation.x = Math.sin(a) * 0.4;
+      house.add(lf);
+    }
+
+    /* pendant lamp */
+    var cord = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 1.55, 6), goldDeep);
+    cord.position.set(-1.25, 1.72, 0.0); house.add(cord);
+    var shade = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.2, 0.24, 28, 1, true), new THREE.MeshStandardMaterial({ color: 0xc9a063, metalness: 1, roughness: 0.28, envMap: env, side: THREE.DoubleSide }));
+    shade.position.set(-1.25, 0.86, 0); house.add(shade);
+    var bulb = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffe2b0 }));
+    bulb.position.set(-1.25, 0.78, 0); house.add(bulb);
+    var glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex('rgba(255,214,150,0.95)', 'rgba(255,190,110,0)'), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+    glow.scale.set(1.5, 1.5, 1); glow.position.set(-1.25, 0.72, 0.3); house.add(glow);
+    var lamp = new THREE.PointLight(0xffc27a, 1.8, 5);
+    lamp.position.set(-1.25, 0.7, 0.5); house.add(lamp);
+
+    /* base */
+    var floor = new THREE.Mesh(new THREE.CylinderGeometry(3.7, 3.7, 0.08, 72), new THREE.MeshStandardMaterial({ color: 0x0f0b08, metalness: 0.8, roughness: 0.32, envMap: env }));
+    floor.position.set(-0.4, -1.74, 0); house.add(floor);
+    var ring = new THREE.Mesh(new THREE.RingGeometry(3.62, 3.7, 96), new THREE.MeshBasicMaterial({ color: 0xc39a5e, side: THREE.DoubleSide }));
+    ring.rotation.x = -Math.PI / 2; ring.position.set(-0.4, -1.695, 0); house.add(ring);
+
+    scene.add(new THREE.AmbientLight(0xffe9cf, 0.3));
+    var key = new THREE.DirectionalLight(0xffdcae, 1.5); key.position.set(4, 6, 6); scene.add(key);
+    var rim = new THREE.DirectionalLight(0xffb870, 0.8); rim.position.set(-6, 3, -4); scene.add(rim);
+
+    /* drifting gold dust */
+    var N = 140, pos = new Float32Array(N * 3), spd = [], i;
+    for (i = 0; i < N; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 9; pos[i * 3 + 1] = (Math.random() - 0.5) * 7; pos[i * 3 + 2] = (Math.random() - 0.5) * 5;
+      spd.push(0.1 + Math.random() * 0.25);
+    }
+    var pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    var dust = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xe6c88f, size: 0.035, transparent: true, opacity: 0.7, depthWrite: false }));
+    scene.add(dust);
+
+    house.position.set(0.4, -0.75, 0);
+    var mx = 0, my = 0, ry = -0.35, rx = 0, vis = true, running = false, t0 = performance.now();
+
+    window.addEventListener('pointermove', function (e) {
+      var b = stage.getBoundingClientRect();
+      mx = ((e.clientX - b.left) / b.width - 0.5) * 2;
+      my = ((e.clientY - b.top) / b.height - 0.5) * 2;
+      mx = Math.max(-1.5, Math.min(1.5, mx)); my = Math.max(-1.5, Math.min(1.5, my));
+    }, { passive: true });
+
+    function frame(now) {
+      var t = (now - t0) / 1000;
+      var sc = (window.scrollY || 0) * 0.0011;
+      var tgtY = mx * 0.5 + Math.sin(t * 0.4) * 0.22 - 0.1 + sc;
+      var tgtX = my * 0.12;
+      ry += (tgtY - ry) * 0.05; rx += (tgtX - rx) * 0.05;
+      house.rotation.y = ry; house.rotation.x = rx;
+      lamp.intensity = 1.8 + Math.sin(t * 2.1) * 0.08;
+      var p = pg.attributes.position.array, j;
+      for (j = 0; j < N; j++) {
+        p[j * 3 + 1] += spd[j] * 0.008;
+        if (p[j * 3 + 1] > 3.6) p[j * 3 + 1] = -3.6;
+      }
+      pg.attributes.position.needsUpdate = true;
+      renderer.render(scene, camera);
+    }
+    function loop(now) {
+      if (!vis) { running = false; return; }
+      frame(now); requestAnimationFrame(loop);
+    }
+    function start() { if (!running && !reduce) { running = true; requestAnimationFrame(loop); } }
+
+    watch(stage, function (w, h) {
+      renderer.setSize(w, h, false);
+      var asp = w / h; camera.aspect = asp;
+      var z = asp < 1.0 ? 11.5 / Math.pow(asp, 0.92) : 11.5;
+      camera.position.set(0, 0.4, z); camera.lookAt(0, 0.45, 0);
+      camera.updateProjectionMatrix();
+      frame(performance.now());
+    }, function (v) { vis = v; if (v) start(); });
+    frame(performance.now());
+    start();
+  }
+
+  /* ---------- Louver studio ---------- */
+  function studio() {
+    var view = document.querySelector('.studio .view');
+    var canvas = document.getElementById('studioCanvas');
+    var renderer = makeRenderer(canvas);
+    var scene = new THREE.Scene();
+    var env = envMap(renderer);
+    scene.environment = env;
+    var camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
+    camera.position.set(0, 0, 7.2);
+
+    var WALL = 2.4, MAXN = 80;
+    var FIN = {
+      walnut: { color: 0x4a2f1c, metalness: 0.1, roughness: 0.55, name: 'Walnut' },
+      oak: { color: 0xb08a5a, metalness: 0.08, roughness: 0.6, name: 'Oak' },
+      charcoal: { color: 0x2a2723, metalness: 0.2, roughness: 0.5, name: 'Charcoal' },
+      brass: { color: 0xc9a063, metalness: 1, roughness: 0.3, name: 'Brass' }
+    };
+    var slatMat = new THREE.MeshStandardMaterial({ color: FIN.walnut.color, metalness: FIN.walnut.metalness, roughness: FIN.walnut.roughness, envMap: env });
+    var slats = new THREE.InstancedMesh(new THREE.BoxGeometry(1, WALL, 0.05), slatMat, MAXN * 2);
+    var wall = new THREE.Group(); scene.add(wall); wall.add(slats);
+
+    var backOff = new THREE.MeshStandardMaterial({ color: 0x0d0a07, roughness: 0.9 });
+    var backOn = new THREE.MeshBasicMaterial({ map: glowTex('rgba(255,205,135,1)', 'rgba(120,70,20,0.55)') });
+    var back = new THREE.Mesh(new THREE.PlaneGeometry(WALL + 0.3, WALL + 0.3), backOn);
+    back.position.z = -0.04; wall.add(back);
+    var floor = new THREE.Mesh(new THREE.BoxGeometry(WALL + 0.9, 0.04, 0.9), new THREE.MeshStandardMaterial({ color: 0x1c1610, metalness: 0.6, roughness: 0.4, envMap: env }));
+    floor.position.set(0, -WALL / 2 - 0.15, 0.4); wall.add(floor);
+
+    scene.add(new THREE.AmbientLight(0xffe9cf, 0.35));
+    var key = new THREE.DirectionalLight(0xffdcae, 1.3); key.position.set(3, 4, 6); scene.add(key);
+
+    var sw = document.getElementById('sw'), sg = document.getElementById('sg'), led = document.getElementById('led');
+    var swo = document.getElementById('swo'), sgo = document.getElementById('sgo'), out = document.getElementById('readout');
+    var fin = 'walnut', m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), p = new THREE.Vector3(), s = new THREE.Vector3();
+
+    function rebuild() {
+      var w = +sw.value, g = +sg.value;
+      var n = Math.min(MAXN * 2, Math.max(1, Math.floor((WALL * 1000 + g) / (w + g))));
+      var total = (n * w + (n - 1) * g) / 1000, i;
+      for (i = 0; i < n; i++) {
+        p.set(-total / 2 + (i * (w + g) + w / 2) / 1000, 0, 0);
+        s.set(w / 1000, 1, 1);
+        m4.compose(p, q, s); slats.setMatrixAt(i, m4);
+      }
+      slats.count = n; slats.instanceMatrix.needsUpdate = true;
+      back.material = led.checked ? backOn : backOff;
+      swo.textContent = w + ' mm'; sgo.textContent = g + ' mm';
+      out.innerHTML = '<b>' + n + '</b> slats · ' + w + ' mm slat · ' + g + ' mm gap · ' + FIN[fin].name + (led.checked ? ' · back-lit' : '') + ' · wall 2400 mm';
+      window.__louver = n + ' ' + FIN[fin].name + ' slats, ' + w + ' mm wide with ' + g + ' mm gaps' + (led.checked ? ', back-lit' : '') + ' on a 2400 mm wall';
+      draw();
+    }
+
+    var ry = -0.4, rx = 0.05, tx = -0.4, drag = false, lastX = 0, lastY = 0, idle = 0, vis = true, running = false, t0 = performance.now();
+    function draw() { wall.rotation.y = ry; wall.rotation.x = rx; renderer.render(scene, camera); }
+    canvas.addEventListener('pointerdown', function (e) { drag = true; lastX = e.clientX; lastY = e.clientY; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      tx = Math.max(-0.9, Math.min(0.9, tx + (e.clientX - lastX) * 0.007));
+      rx = Math.max(-0.3, Math.min(0.3, rx + (e.clientY - lastY) * 0.004));
+      lastX = e.clientX; lastY = e.clientY; idle = 0;
+      if (reduce) { ry = tx; draw(); }
+    });
+    function up() { drag = false; }
+    canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+
+    function loop(now) {
+      if (!vis) { running = false; return; }
+      idle += 1;
+      var sway = (!drag && idle > 180) ? Math.sin((now - t0) / 2200) * 0.5 : null;
+      var target = sway === null ? tx : sway;
+      ry += (target - ry) * 0.08;
+      if (!drag && idle > 180) tx = ry;
+      draw(); requestAnimationFrame(loop);
+    }
+    function start() { if (!running && !reduce) { running = true; requestAnimationFrame(loop); } }
+
+    [sw, sg, led].forEach(function (el) { el.addEventListener('input', rebuild); el.addEventListener('change', rebuild); });
+    document.getElementById('finishes').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-f]'); if (!b) return;
+      fin = b.getAttribute('data-f');
+      var f = FIN[fin];
+      slatMat.color.setHex(f.color); slatMat.metalness = f.metalness; slatMat.roughness = f.roughness;
+      Array.prototype.forEach.call(this.children, function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); });
+      rebuild();
+    });
+
+    watch(view, function (w, h) {
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.position.z = w / h < 1.1 ? 7.2 * 1.1 / (w / h) * 0.95 : 7.2;
+      camera.updateProjectionMatrix(); draw();
+    }, function (v) { vis = v; if (v) start(); });
+    rebuild(); start();
+  }
+
+  function guard(fn, stageSel) {
+    try { if (!HAS3D) throw new Error('no three'); fn(); }
+    catch (e) {
+      var st = document.querySelector(stageSel);
+      if (st) st.setAttribute('data-3d', 'off');
+      if (stageSel === '.studio .view') {
+        document.querySelector('.studio .view').innerHTML = '<p style="padding:24px;color:#a39887">The 3D louver studio needs WebGL, which this browser has turned off.</p>';
+      }
+    }
+  }
+  guard(hero, '#heroStage');
+  guard(studio, '.studio .view');
+
+  /* ---------- Enquiry form (prepares a message to copy; nothing is sent from this page) ---------- */
+  var form = document.getElementById('enq'), outBox = document.getElementById('out'), outText = document.getElementById('outText'), status = document.getElementById('status'), mail = document.getElementById('mail');
+  var EMAIL = 'sahejbusiness05@gmail.com';
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var needs = Array.prototype.map.call(document.querySelectorAll('#needs input:checked'), function (i) { return i.value; });
+    var lines = [
+      'Hello House Journal team,', '',
+      'I would like a consultation for my space.', '',
+      'Name: ' + (document.getElementById('nm').value.trim() || '(not given)'),
+      'Phone: ' + (document.getElementById('ph').value.trim() || '(not given)'),
+      'Type of space: ' + document.getElementById('sp').value,
+      'Needs: ' + (needs.length ? needs.join(', ') : '(not specified)')
+    ];
+    if (window.__louver) lines.push('Louver idea: ' + window.__louver);
+    var msg = document.getElementById('msg').value.trim();
+    if (msg) lines.push('', msg);
+    lines.push('', 'Thank you.');
+    outText.value = lines.join('\n');
+    mail.href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent('Interior enquiry') + '&body=' + encodeURIComponent(outText.value);
+    outBox.hidden = false; status.textContent = '';
+    outBox.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+  });
+  document.getElementById('copy').addEventListener('click', function () {
+    function fallback() { outText.focus(); outText.select(); status.textContent = 'Press Ctrl+C (or Copy on your phone) to copy the selected text.'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(outText.value).then(function () { status.textContent = 'Copied. Paste it into an email to ' + EMAIL + '.'; }, fallback);
+    } else fallback();
+  });
+})();
+</script>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* pointer tilt on image cards */
+  if (!reduce && fine) {
+    Array.prototype.forEach.call(document.querySelectorAll('.tilt'), function (el) {
+      el.addEventListener('pointermove', function (e) {
+        var b = el.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height;
+        el.style.setProperty('--ry', ((x - 0.5) * 14).toFixed(2) + 'deg');
+        el.style.setProperty('--rx', ((0.5 - y) * 12).toFixed(2) + 'deg');
+        el.style.setProperty('--gx', (x * 100) + '%'); el.style.setProperty('--gy', (y * 100) + '%'); el.style.setProperty('--go', 1);
+      });
+      el.addEventListener('pointerleave', function () {
+        el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); el.style.setProperty('--go', 0);
+      });
+    });
+  }
+
+  /* ---------- featured slideshow with 3D flip ---------- */
+  (function () {
+    var show = document.getElementById('show'); if (!show) return;
+    var slides = Array.prototype.slice.call(show.querySelectorAll('.slide'));
+    var dotsBox = document.getElementById('sDots'), n = slides.length, idx = 0, timer = null, hold = false, vis = true, DUR = 6000;
+    show.parentNode.style.setProperty('--dur', (DUR / 1000) + 's'); dotsBox.style.setProperty('--dur', (DUR / 1000) + 's');
+    var dots = slides.map(function (_, i) {
+      var b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+      b.appendChild(document.createElement('i')); b.addEventListener('click', function () { go(i, true); }); dotsBox.appendChild(b); return b;
+    });
+    function paint() {
+      slides.forEach(function (s, i) {
+        s.classList.toggle('is-active', i === idx);
+        s.classList.toggle('is-prev', i === ((idx - 1 + n) % n));
+        s.setAttribute('aria-hidden', i === idx ? 'false' : 'true');
+        Array.prototype.forEach.call(s.querySelectorAll('a,button'), function (el) { el.tabIndex = i === idx ? 0 : -1; });
+      });
+      dots.forEach(function (d, i) { d.removeAttribute('aria-current'); });
+      void dotsBox.offsetWidth;
+      dots[idx].setAttribute('aria-current', 'true');
+    }
+    function arm() {
+      clearTimeout(timer);
+      if (reduce || hold || !vis) { dotsBox.classList.add('paused'); return; }
+      dotsBox.classList.remove('paused');
+      timer = setTimeout(function () { go((idx + 1) % n); }, DUR);
+    }
+    function go(i, user) { idx = (i + n) % n; paint(); if (user) { hold = false; } arm(); }
+    document.getElementById('sPrev').addEventListener('click', function () { go(idx - 1, true); });
+    document.getElementById('sNext').addEventListener('click', function () { go(idx + 1, true); });
+    show.addEventListener('pointerenter', function () { hold = true; arm(); });
+    show.addEventListener('pointerleave', function () { hold = false; arm(); });
+    show.addEventListener('focusin', function () { hold = true; arm(); });
+    show.addEventListener('focusout', function () { hold = false; arm(); });
+    if (window.IntersectionObserver) new IntersectionObserver(function (e) { vis = e[0].isIntersecting; arm(); }, { threshold: 0.25 }).observe(show);
+    paint(); arm();
+  })();
+
+  /* ---------- 3D ceiling ring ---------- */
+  (function () {
+    var wrap = document.getElementById('ringWrap'); if (!wrap) return;
+    var ring = document.getElementById('ring'), panel = document.getElementById('panel');
+    var items = Array.prototype.slice.call(ring.children), n = items.length, step = 360 / n;
+    var ang = 0, target = 0, drag = false, lastX = 0, moved = 0, pauseUntil = 0, active = -1, vis = true, running = false;
+    var DATA = [
+      { t: 'False ceiling: where to use it and where to skip it', c: 'Overview', intro: 'A false ceiling can lift a room, or add clutter. These cards show when it earns its place.', pts: [['Use it','When it solves a problem or improves the design'],['Skip it','When it adds a layer with no purpose']] },
+      { t: 'Do you actually need a false ceiling?', c: '1 of 4', intro: 'Not every room needs one. A false ceiling makes sense when it helps with:', pts: [['Better lighting integration',''],['Concealing electrical services',''],['Improving room proportions','']], tag: 'If it does not solve a problem or improve the design, skip it.' },
+      { t: 'When does a false ceiling make sense?', c: '2 of 4', intro: 'Use it when it serves a purpose.', pts: [['Lighting','Recessed and layered lighting.'],['Services','Hide wires, ducts and pipes.'],['Proportions','Balance the room height.'],['Design','Add depth and definition.']], tag: 'Design the ceiling with purpose.' },
+      { t: 'When does a false ceiling not make sense?', c: '3 of 4', intro: 'A false ceiling may not be necessary when:', pts: [['Low ceiling','Can make the room feel smaller.'],['No services to hide','No need to add a layer without a purpose.'],['Strong ceiling already','Let the existing architecture speak.'],['Unnecessary complexity','Can make the space feel cluttered.']], tag: 'Keep it when it adds value. Skip it when it does not.' },
+      { t: 'Common ceiling options and their visual effect', c: '4 of 4', intro: '', pts: [['Flat false ceiling','Clean, minimal and contemporary.'],['Cove ceiling','Creates soft indirect lighting and a warmer atmosphere.'],['Floating or dropped ceiling','Adds depth and creates a visual focal point.'],['Perimeter ceiling','Defines the room while keeping the centre visually open.'],['Exposed ceiling','Industrial, spacious and more raw in character.']] }
+    ];
+    function esc(x) { var d = document.createElement('div'); d.textContent = x; return d.innerHTML; }
+    function render(i) {
+      var d = DATA[i], h = '<span class="count">' + esc(d.c) + '</span><h3>' + esc(d.t) + '</h3>';
+      if (d.intro) h += '<p class="lede">' + esc(d.intro) + '</p>';
+      h += '<ul>' + d.pts.map(function (p) { return '<li><b>' + esc(p[0]) + '</b>' + (p[1] ? '<span>' + esc(p[1]) + '</span>' : '') + '</li>'; }).join('') + '</ul>';
+      if (d.tag) h += '<p class="tag">' + esc(d.tag) + '</p>';
+      panel.innerHTML = h;
+    }
+    function norm(a) { return ((a % 360) + 540) % 360 - 180; }
+    function snap(dir) { target = (Math.round(target / step) + dir) * step; pauseUntil = performance.now() + 9000; draw(); }
+    function toIndex(i) { var d = norm(-i * step - target); target += d; pauseUntil = performance.now() + 9000; draw(); }
+    function draw() {
+      ring.style.setProperty('--a', ang.toFixed(2) + 'deg');
+      var best = 0, bestA = 999;
+      items.forEach(function (it, i) {
+        var a = norm(i * step + ang), c = Math.cos(a * Math.PI / 180);
+        it.style.opacity = (0.3 + 0.7 * Math.max(0, c)).toFixed(2);
+        it.style.pointerEvents = c > 0.2 ? 'auto' : 'none';
+        if (Math.abs(a) < bestA) { bestA = Math.abs(a); best = i; }
+      });
+      if (best !== active) { active = best; render(best); }
+    }
+    function loop(now) {
+      if (!vis) { running = false; return; }
+      if (!drag && !reduce && now > pauseUntil) target -= 0.1;
+      ang += (target - ang) * 0.09; draw(); requestAnimationFrame(loop);
+    }
+    function start() { if (!running) { running = true; requestAnimationFrame(loop); } }
+    wrap.addEventListener('pointerdown', function (e) { drag = true; moved = 0; lastX = e.clientX; try { wrap.setPointerCapture(e.pointerId); } catch (x) {} });
+    wrap.addEventListener('pointermove', function (e) { if (!drag) return; var dx = e.clientX - lastX; lastX = e.clientX; moved += Math.abs(dx); target += dx * 0.35; pauseUntil = performance.now() + 9000; });
+    function up() { drag = false; target = Math.round(target / step) * step; }
+    wrap.addEventListener('pointerup', up); wrap.addEventListener('pointercancel', up);
+    items.forEach(function (it, i) { it.addEventListener('click', function () { if (moved < 6) toIndex(i); }); });
+    document.getElementById('rPrev').addEventListener('click', function () { snap(1); });
+    document.getElementById('rNext').addEventListener('click', function () { snap(-1); });
+    if (window.IntersectionObserver) new IntersectionObserver(function (e) { vis = e[0].isIntersecting; if (vis) start(); }, { threshold: 0 }).observe(wrap); else vis = true;
+    draw(); start();
+  })();
+
+  /* video: pause when scrolled away */
+  var reel = document.getElementById('reel');
+  if (reel && window.IntersectionObserver) new IntersectionObserver(function (e) { if (!e[0].isIntersecting && !reel.paused) reel.pause(); }, { threshold: 0.1 }).observe(reel);
+})();
+</script>
+
+</body></html>
